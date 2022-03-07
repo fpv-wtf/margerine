@@ -2,6 +2,17 @@ const SerialPort = require('serialport')
 const yargs = require('yargs')
 const chalk = require('chalk')
 
+
+/* we use Sentry to help debug in case of errors in the obfuscated build */
+const Sentry = require("@sentry/node");
+const Tracing = require("@sentry/tracing");
+
+Sentry.init({
+  dsn: "https://f3110f11c161495da96d9930b41ee20b@o660067.ingest.sentry.io/6247631",
+  tracesSampleRate: 1.0,
+});
+
+
 const { lock, unlock } = require("./src/exploit")
 
 
@@ -39,7 +50,14 @@ const argv = yargs
         process.exit(0)
     })
     .catch((error)=>{
-        console.log(error)
+        console.error(error)
+        console.error("couldn't do the magic. please read the notes in README.md, restart your device and try again")
+        Sentry.captureException(error)
+        
+        //let sentry finish reporting the error
+        setTimeout(() => { process.exit(1) }, 1000)
+        
+
     })
 })
 .command('lock [serialport]', 'disable startup patches', (yargs) => {
@@ -55,7 +73,10 @@ const argv = yargs
         process.exit(0)
     })
     .catch((error)=>{
-        console.log(error)
+        Sentry.captureException(error)
+        console.error(error)
+        //let sentry finish reporting the error
+        setTimeout(() => { process.exit(1) }, 1000)
     })
 })
 .demandCommand()

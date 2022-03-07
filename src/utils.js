@@ -1,3 +1,6 @@
+const Sentry = require("@sentry/node");
+
+
 const readline = require("readline");
 const rl = readline.createInterface({
     input: process.stdin,
@@ -74,11 +77,15 @@ const talk = function(port, cmd, wait, timeout) {
         else {
             pack.data = cmd.data
         }
+
+
         pack.timeOut = 3000
         pack.seq = seq
         seq++
         try {
             pack.pack();
+            logInfo("request", Buffer.from(pack.toBuffer()).toString("hex"))
+
             //console.info("request", pack.toObject())
             //console.info("raw request", pack.toString())
             sendAndReceive(pack.toBuffer(), port, wait, timeout).then((res) => {
@@ -91,6 +98,7 @@ const talk = function(port, cmd, wait, timeout) {
                     const unpacker = new packer();
                     unpacker.unpack(res, pack)
                     //console.info("response", unpacker.toObject())
+                    logInfo("response", unpacker.toBuffer().toString("hex"))
                     resolve(unpacker.toObject())
                 }
                 else {
@@ -105,6 +113,18 @@ const talk = function(port, cmd, wait, timeout) {
     });
 }
 
+const logInfo = function(category, message, level) {
+    if(!level) {
+        level = Sentry.Severity.Info
+    }
+    Sentry.addBreadcrumb({
+        category: category,
+        message: message,
+        level: level,
+      });
+}
+
 module.exports.sleep = sleep
 module.exports.confirm = confirm
 module.exports.talk = talk
+module.exports.logInfo = logInfo
