@@ -63,6 +63,10 @@ Magic unicorn dust and sprinkles. For the time being, we're keeping the details 
 	- Needs hooking or injecting directly into the existing GUI
 - More documentation
 
+## It's spelled margarine
+
+No, [it's not](https://www.youtube.com/watch?v=2z_gi6AniEo).
+
 ## Credits
 While an original exploit, this would not have been even remotely possible without work by [@tmbinc](https://twitter.com/tmbinc) and [@bin4ry](https://drone-hacks.com/). Also a shout out to the rest of the OG's for all their work on [dji-firmware-tools](https://github.com/o-gs/dji-firmware-tools).
 

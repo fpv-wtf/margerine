@@ -122,7 +122,7 @@ class pack {
             if(request && (this.cmdId !== request.cmdId || this.cmdSet !== request.cmdSet)) {
                 if(buffer.length > this.length && buffer[this.length] == 0x55) {
                     //console.log("multiple responses", this.cmdId)
-                    return this.unpack(buffer.subarray(this.length))
+                    return this.unpack(buffer.subarray(this.length), request)
                 }
                 else {
                     throw "unexpected response seq and no more packets to try"
