@@ -98,7 +98,7 @@ const talk = function(port, cmd, wait, timeout) {
                     const unpacker = new packer();
                     unpacker.unpack(res, pack)
                     //console.info("response", unpacker.toObject())
-                    logInfo("response", unpacker.toBuffer().toString("hex"))
+                    logInfo("response", unpacker.buffer.slice(0, unpacker.length).toString("hex"))
                     resolve(unpacker.toObject())
                 }
                 else {

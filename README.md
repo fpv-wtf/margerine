@@ -25,8 +25,10 @@ Plug in the victim device via USB and run:
 ## What can I do with this?
 
  - Play [Doom](https://github.com/fpv-wtf/dfbdoom)
+ - Customize the UI theme in /system/gui/xml/themes/defult/theme.xml
  - Pair an Air Unit (or Vista) to another Air Unit using `/system/bin/modem_info.sh reverse` on one of them.
- - Talk to connected devices via PING/TCP or UDP. Goggles are 192.168.41.1 and ground side is 192.168.41.2.
+ - Talk to connected devices via PING/TCP or UDP. Goggles are 192.168.41.1 and air side is 192.168.41.2.
+ - Debug USB devices such as input on V2 Goggles (no OTG on V1) by `adb shell`-ing into a connected Vista/AU and then using `adb connect 192.168.41.1 && adb shell` to debug wirelessily.
  - Build stuff with the latest Android NDK with the armv7 architecture and target platform of 23. 
     - A modified Directfb framebuffer library is available for drawing to an ARGB target to be overlaid on top of the video feed.
     - Direct access to the framebuffer is not available, except via special undocumented DMI bullsh*t. 

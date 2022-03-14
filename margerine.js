@@ -79,5 +79,6 @@ const argv = yargs
         setTimeout(() => { process.exit(1) }, 1000)
     })
 })
+
 .demandCommand()
 .argv
