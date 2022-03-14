@@ -11,13 +11,20 @@ Plug in the victim device via USB and run:
 
     node margerine.js unlock
 
-## Notes
- - Requires an internet connection, as a certain signing procedure happens on [Drone-Hacks](https://drone-hacks.com/) server kindly provided by @bin4ry
+## Troubleshooting
+ - The device might change it's COM port number on Windows (eg. COM4 -> COM5) in the middle of the exploit and error out. That's a good sign! Look up the new COM port in Device Manager (if auto detect didn't work for you) and re-run the exploit to finish everything up.
  - The device being exploited should not be connected to anything else, i.e. Googles to AU or AU to Goggles.
  - On the Air Unit the SD card must be removed.
+ - V2 Goggles must be flashed from DIY mode to 01.00.0606.
+  - Checking the menus in DIY mode is insufficient. Make sure Assistant says "Refresh" next to 0606, rather than "Downgrade". If you see "Downgrade", go ahead and downgrade.
+  - If you've flashed to 01.02.0015 from drone mode the exploit won't work and you can't downgrade at the moment, sorry.
+  - Despite the bigger version number 01.02.0020 in drone mode can be downgraded to 0606 in DIY mode.
+
+
+## Other notes
+ - Requires an internet connection, as a certain signing procedure happens on [Drone-Hacks](https://drone-hacks.com/) server kindly provided by @bin4ry
+ - Takes a few minutes, so make sure your battery is not too low if powering AU/Vista from a quad.
  - You have to run `node margerine.js lock` before the Assistant will allow you to flash firmwares again.
- - V2 Goggles must be flashed from DIY mode to 0606.
- - `result 224` - try again
  - Disables SELinux for you
  - On *150 remounts /proc/cmdline so that mp_state=engineering, which enables adb
  - With great power comes great responsibility - **you CAN bootloop/brick your device** if you break the right files and there's currently no low level recovery methods available. 
