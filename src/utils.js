@@ -124,7 +124,33 @@ const logInfo = function(category, message, level) {
       });
 }
 
+const wrapSentry = async function(op, action) {
+    const transaction = Sentry.startTransaction({
+        op: op
+    });
+    Sentry.configureScope(scope => {
+        scope.setSpan(transaction);
+    });
+    await action()
+    .catch((error) => {
+        console.log(error)
+        Sentry.captureException(error)
+        //let sentry finish it's error reporting
+        return sleep(1000).then(() => {
+            process.exit(1)
+        })
+    })
+    .then(()=> {
+        transaction.finish()
+        //let sentry do it's thing before we terminate
+        return sleep(1000).then(()=> {
+            process.exit(0)
+        })
+    })
+}
+
 module.exports.sleep = sleep
 module.exports.confirm = confirm
 module.exports.talk = talk
 module.exports.logInfo = logInfo
+module.exports.wrapSentry = wrapSentry
