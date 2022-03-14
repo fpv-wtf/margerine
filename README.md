@@ -11,7 +11,7 @@ Plug in the victim device via USB and run:
 
     node margerine.js unlock
 
-Have fun, [consider donating]() and join us on our [Discord]([Discord](https://discord.gg/3rpnBBJKtU)).
+Have fun, [consider donating](https://github.com/fpv-wtf/margerine#support-the-effort) and join us on our [Discord]([Discord](https://discord.gg/3rpnBBJKtU)).
 
 ## Troubleshooting
  - The device might change it's COM port number on Windows (eg. COM4 -> COM5) in the middle of the exploit and error out. That's a good sign! Look up the new COM port in Device Manager (if auto detect didn't work for you) and re-run the exploit to finish everything up.
@@ -68,11 +68,12 @@ Magic unicorn dust and sprinkles. For the time being, we're keeping the details 
 - Some kind of package manager
 	- ipkg seems like an embeddable option
 	- Device doesn't have internet access by default
-		- Just adb push debs?
+		- Just adb push packages?
 		- Route RNDIS
 - A launcher
 	- Needs hooking or injecting directly into the existing GUI
 - More documentation
+- Eventually make a nice web GUI
 
 ## It's spelled margarine
 
