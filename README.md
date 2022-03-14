@@ -1,5 +1,5 @@
 # margerine
-### Episode 2: Revenge of the ¯\\_(ツ)_/¯
+### Episode 2: Revenge of the ¯\\\_(ツ)_/¯
 
 **margerine** is a root exploit and adb enabler for the **DJI Air Unit** (wm150), **Caddx Vista** (lt150), **FPV Goggles V1** (gl150) and **FPV Googles V2** (gl170/gp150) from the same people that brought you [USB Video Out](https://github.com/fpv-wtf/voc-poc).
 
