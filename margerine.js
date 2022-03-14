@@ -47,6 +47,7 @@ const argv = yargs
     .then(unlock)
     .then(() => {
         console.log("\ndevice should be unlocked, try 'adb devices'")
+        console.log("please consider donating: https://github.com/fpv-wtf/margerine#support-the-effort")
         process.exit(0)
     })
     .catch((error)=>{

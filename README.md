@@ -1,7 +1,7 @@
 # margerine
 ### Episode 2: Revenge of the ¯\\_(ツ)_/¯
 
-**margerine** is a root exploit and adb enabler for the **DJI Air Unit** (wm150), **Caddx Vista** (lt150), **FPV Goggles V1** (gl150) and **FPV Googles V2** (gl170 - or gp150 when flashed from DIY mode).
+**margerine** is a root exploit and adb enabler for the **DJI Air Unit** (wm150), **Caddx Vista** (lt150), **FPV Goggles V1** (gl150) and **FPV Googles V2** (gl170/gp150) from the same people that brought you [USB Video Out](https://github.com/fpv-wtf/voc-poc).
 
 # tl;dr;
 Install **nodejs** and the Javascript dependencies:
@@ -10,6 +10,8 @@ Install **nodejs** and the Javascript dependencies:
 Plug in the victim device via USB and run:
 
     node margerine.js unlock
+
+Have fun, [consider donating]() and join us on our [Discord]([Discord](https://discord.gg/3rpnBBJKtU)).
 
 ## Troubleshooting
  - The device might change it's COM port number on Windows (eg. COM4 -> COM5) in the middle of the exploit and error out. That's a good sign! Look up the new COM port in Device Manager (if auto detect didn't work for you) and re-run the exploit to finish everything up.
@@ -77,7 +79,10 @@ Magic unicorn dust and sprinkles. For the time being, we're keeping the details 
 No, [it's not](https://www.youtube.com/watch?v=2z_gi6AniEo).
 
 ## Credits
-While an original exploit, this would not have been even remotely possible without work by [@tmbinc](https://twitter.com/tmbinc) and [@bin4ry](https://drone-hacks.com/). Also a shout out to the rest of the OG's for all their work on [dji-firmware-tools](https://github.com/o-gs/dji-firmware-tools).
+While this is an original exploit by [Joonas Trussmann](https://fpv.wtf/#/about), it would not have been even remotely possible without work by [@tmbinc](https://twitter.com/tmbinc) and [@bin4ry](https://drone-hacks.com/). Also a shout out to the rest of the OG's for all their work on [dji-firmware-tools](https://github.com/o-gs/dji-firmware-tools).
 
 Special thanks go to: @jaanuke, @funnel and @fichek over on our [Discord](https://discord.gg/3rpnBBJKtU).
 
+## Support the effort
+
+This took **A LOT** of my free time over the past year. If you'd like, you can send some ETH to `0xbAB1fec80922328F27De6E2F1CDBC2F322397637` or BTC to `3L7dE5EHtyd2b1tXBwdnWC2MADkV2VTbrq` or [buy me a coffe](https://www.buymeacoffee.com/fpv.wtf). I would really appreciate it.
