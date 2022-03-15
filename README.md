@@ -22,9 +22,9 @@ Have fun! [consider donating](https://github.com/fpv-wtf/margerine#support-the-e
  - The device being exploited should not be connected to anything else; i.e. Googles to AU or AU to Goggles.
  - Make sure there's no SD card in your device.
  - V2 Goggles must be flashed from DIY mode to 01.00.0606.
-  - Checking the menus in DIY mode is insufficient. Make sure Assistant says "Refresh" next to 0606, rather than "Downgrade". If you see "Downgrade", go ahead and downgrade.
-  - If you've flashed to 01.02.0015 in drone mode the exploit won't work and you can't downgrade at the moment, sorry.
-  - Despite the bigger version number 01.02.0020 in drone mode, goggles can be downgraded to 0606 in DIY mode.
+    - Checking the menus in DIY mode is insufficient. Make sure Assistant says "Refresh" next to 0606, rather than "Downgrade". If you see "Downgrade", go ahead and downgrade.
+    - If you've flashed to 01.02.0015 in drone mode the exploit won't work and you can't downgrade at the moment, sorry.
+    - Despite the bigger version number 01.02.0020 in drone mode, goggles can be downgraded to 0606 in DIY mode.
 
 
 ## Other notes
