@@ -3,20 +3,24 @@
 
 **margerine** is a root exploit and adb enabler for the **DJI Air Unit** (wm150), **Caddx Vista** (lt150), **FPV Goggles V1** (gl150), and **FPV Googles V2** (gl170/gp150) from the same people that brought you [USB Video Out](https://github.com/fpv-wtf/voc-poc).
 
+Currently only works reliably on **Windows** and **Mac OS X**, Linux has strange issues in the USB stack - YMMW.
+
 # tl;dr;
 Install **nodejs** and the Javascript dependencies:
 
     npm install
-Plug in the victim device via USB and run:
+
+Remove your SD card for the duration of the exploit, power up the victim device, connect it via USB and run:
 
     node margerine.js unlock
 
 Have fun! [consider donating](https://github.com/fpv-wtf/margerine#support-the-effort) and join us on our [Discord]([Discord](https://discord.gg/3rpnBBJKtU)).
 
 ## Troubleshooting
+ - **waving wand, result e0** - make sure you've followed all the instructions below, reboot your Goggles and try again. It should eventually work.
  - The device might change it's COM port number on Windows (eg. COM4 -> COM5) in the middle of the exploit and error out. That's a good sign! Look up the new COM port in Device Manager (if auto detect didn't work for you) and re-run the exploit to finish everything up.
  - The device being exploited should not be connected to anything else; i.e. Googles to AU or AU to Goggles.
- - On the Air Unit, the SD card must be removed.
+ - Make sure there's no SD card in your device.
  - V2 Goggles must be flashed from DIY mode to 01.00.0606.
   - Checking the menus in DIY mode is insufficient. Make sure Assistant says "Refresh" next to 0606, rather than "Downgrade". If you see "Downgrade", go ahead and downgrade.
   - If you've flashed to 01.02.0015 in drone mode the exploit won't work and you can't downgrade at the moment, sorry.
