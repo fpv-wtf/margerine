@@ -7,6 +7,7 @@ Currently only works reliably on **Windows** and **Mac OS X**, Linux has strange
 
 # tl;dr;
 Use Node.js version 16.x
+
 Install **nodejs** and the Javascript dependencies:
 
     npm install
