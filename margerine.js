@@ -26,7 +26,7 @@ async function getDevice(argv) {
     else {
         return SerialPort.list()
         .then(portInfos => {
-            var dji = portInfos.filter(pinfo => pinfo.vendorId === '2CA3')
+            var dji = portInfos.filter(pinfo => `${pinfo.vendorId}`.match(/2CA3/i))
             if(!dji.length) {
                 console.log("no dji devices detected\nyou may wish to specify a COM port, see node margerine.js --help")
                 process.exit(1)
