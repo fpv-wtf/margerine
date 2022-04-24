@@ -14,7 +14,7 @@ Remove your SD card for the duration of the exploit, power up the victim device,
 
     node margerine.js unlock
 
-Have fun! [consider donating](https://github.com/fpv-wtf/margerine#support-the-effort) and join us on our [Discord]([Discord](https://discord.gg/3rpnBBJKtU)).
+Have fun! [consider donating](https://github.com/fpv-wtf/margerine#support-the-effort) and join us on our [Discord](https://discord.gg/3rpnBBJKtU).
 
 ## Troubleshooting
  - **waving wand, result e0** - make sure you've followed all the instructions below, reboot your Goggles and try again. It should eventually work.
