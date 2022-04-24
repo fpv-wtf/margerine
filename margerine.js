@@ -1,10 +1,14 @@
 const SerialPort = require('serialport')
 const yargs = require('yargs')
 const chalk = require('chalk')
+
+
 const Adb = require('@devicefarmer/adbkit')
 const fs = require("fs")
 const tar = require("tar")
-const crypto = require('crypto')
+const crypto = require("crypto")
+const proxyListen = require("./src/proxy").listen
+
 
 /* we use Sentry to help debug in case of errors in the obfuscated build and basic analytics */
 const Sentry = require("@sentry/node");
@@ -17,8 +21,10 @@ Sentry.init({
 
 
 const { lock, unlock } = require("./src/exploit")
-const { wrapSentry, getAllFiles } = require("./src/utils")
-const { resolve } = require('@sentry/utils')
+const { wrapSentry } = require("./src/utils")
+const { Server } = require('http')
+
+const proxyPort = 8874
 
 console.log(chalk.hex("#0057b7")("margerine - brought to you with love by the fpv.wtf team"))
 console.log(chalk.hex("#ffd700")("special thanks to @tmbinc, @bin4ry, @jaanuke and @funnel\n"))
@@ -30,7 +36,7 @@ async function getDevice(argv) {
     else {
         return SerialPort.list()
         .then(portInfos => {
-            var dji = portInfos.filter(pinfo => `${pinfo.vendorId}`.match(/2CA3/i))
+            var dji = portInfos.filter(pinfo => pinfo.vendorId === '2CA3')
             if(!dji.length) {
                 console.log("no dji devices detected\nyou may wish to specify a COM port, see node margerine.js --help")
                 process.exit(1)
@@ -77,6 +83,35 @@ const argv = yargs
     })
     
 })
+.command('proxy [port]', 'start the built in http -> https proxy', (yargs) => {
+    return yargs
+      .positional('port', {
+        describe: 'port to start ong'
+      })
+  }, (argv) => {
+    const client = Adb.createClient()   
+
+
+    client.listDevices()
+    .then(devices => {
+        if(devices.length == 0) {
+            throw "no adb devices found"
+        }
+        const device = devices[0]
+        
+        return client.reverse(device.id, "tcp:8089", "tcp:"+(argv.port ? argv.port : proxyPort))
+        .then(function(conn) {
+            return proxyListen(proxyPort)
+        })
+
+    })
+    .catch(error => {
+        console.log(error)
+        process.exit(1)
+    })
+
+    
+})
 .command('payload [payloaddir] [setupexec]', 'copies the payload folder to / and executes setupexec', (yargs) => {
     return yargs
       .positional('payloaddir', {
@@ -107,7 +142,7 @@ const argv = yargs
                   throw "device not supported"
               }
               console.log("tarring")
-              return tar.c({ file: "payload-"+uuid+".tar", cwd: payloadDir, gzip: false }, fs.readdirSync(payloadDir))
+              return tar.c({ file: "payload-"+uuid+".tar", cwd: payloadDir, gzip: false, portable: true }, fs.readdirSync(payloadDir))
              
               
             })
@@ -124,22 +159,40 @@ const argv = yargs
             .then(() => {
                 fs.unlinkSync("payload-"+uuid+".tar")
                 console.log("extracting")
-                return client.shell(device.id, 'tar xvf /tmp/payload.tar -C / && rm /tmp/payload.tar --no-same-owner')
+                return client.shell(device.id, 'tar xvf /tmp/payload.tar -C / && rm /tmp/payload.tar')
                 .then(Adb.util.readAll)
                 .then(output => {
                     console.log("unpacked", output.toString().trim())
                 })
             })
             .then(() => {
-                return client.shell(device.id, setupExec)
+                return client.reverse(device.id, "tcp:8089", "tcp:"+proxyPort)
+                .then(function(conn) {
+                  return proxyListen(proxyPort)
+                })
+            })
+            .then(() => {
+                var exitCode = 255
+                return client.shell(device.id, "chmod u+x "+setupExec+" && "+setupExec+"; echo \"exitCode:$?\"")
                 .then(function(conn) {
                     return new Promise((resolve, reject) => {
                         conn.on('data', function(data) {
                         console.log(data.toString())
+                        const match = data.toString().match(/exitCode:(\d*)/)
+                        if(match) {
+                            console.log(match)
+                            exitCode = parseInt(match[1])
+                        }
                         });
                         conn.on('close', function() {
-                            console.log('payload delivery done')
-                            resolve()
+                            if(exitCode === 0) {
+                                console.log('payload delivery done')
+                                resolve()
+                            }
+                            else {
+                                reject("payload execution failed with exit code: "+exitCode)
+                            }
+
                         })
                     });
                 })
