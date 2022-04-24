@@ -6,6 +6,8 @@
 Currently only works reliably on **Windows** and **Mac OS X**, Linux has strange issues in the USB stack - YMMW.
 
 # tl;dr;
+Use Node.js version 16.x
+
 Install **nodejs** and the Javascript dependencies:
 
     npm install
