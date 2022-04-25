@@ -16,12 +16,19 @@
         headers: request.headers,
         rejectUnauthorized: false
     }
-    if(request.url.startsWith("http://")) {
+    var protocol = http
+    if(request.url.startsWith("http://") && !request.url.startsWith("http://repo.fpv.wtf")) {
         url = "https://"+request.url.substring("http://".length)
+        protocol = https
     }
+    if(request.url.startsWith("http://repo.fpv.wtf/http%3a//")) {
+        url = "https://"+request.url.substring("http://repo.fpv.wtf/http%3a//".length)
+        protocol = https
+    }
+
     console.log("proxy serving request to "+url, options)
     
-    const proxy_request = https.request(url, options, (res) => {
+    const proxy_request = protocol.request(url, options, (res) => {
         console.log("got response "+res.statusCode)
 
         res.on('data', function(chunk) {
@@ -35,7 +42,7 @@
         res.on('error', error => {
             console.error(error)
         })
-        if(res.statusCode === 302) {
+        if(res.statusCode === 301 || res.statusCode === 302) {
             if(res.headers.location.startsWith("https://")) {
                 res.headers.location = "http://"+res.headers.location.substring("https://".length)
             }
