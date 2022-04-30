@@ -1,8 +1,0 @@
-#!/system/bin/sh
-
-mount -o rw,remount /
-mkdir /bin
-ln -sf /system/bin/sh /bin/sh
-ln -sf /blackbox/margerine/opt /opt
-mount -o ro,remount /
-echo "entware: /opt and /bin/sh created" | tee /dev/kmsg

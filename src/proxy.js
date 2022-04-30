@@ -2,6 +2,8 @@
  const https = require('https')
  var url  = require('url')
 
+ const Adb = require('@devicefarmer/adbkit')
+
 
  var verbosity = 0
 
@@ -74,9 +76,40 @@
 })
 
 module.exports.listen = (port) => {
-    server.listen(port, '0.0.0.0')
-    console.log("proxy listening on port: "+port)
+    server.on('error', (e) => {
+        if (e.code === 'EADDRINUSE') {
+            console.log('proxy port in use, presuming other proxy process running');
+        }
+        else {
+            throw e
+        }
+    });
+    server.listen(port, '0.0.0.0', () => {
+        console.log("proxy listening on port: "+port)
+        var client = Adb.createClient()
+        client.trackDevices()
+        .then(function(tracker) {
+            tracker.on('add', function(device) {
+                console.log('Device %s was plugged in', device.id)
+                client.reverse(device.id, "tcp:8089", "tcp:"+port).then(()=> {
+                    console.log("reverse port forward suceeded")
+                })
+            })
+    
+            tracker.on('remove', function(device) {
+                console.log('Device %s was unplugged', device.id)
+            })
+            tracker.on('end', function() {
+                console.log('Tracking stopped')
+            })
+        })
+        .catch(function(err) {
+            console.error('Something went wrong:', err.stack)
+        })
+    })
+    
 }
+
 module.exports.setVerbosity = (_verbosity) => {
     verbosity = _verbosity
 }

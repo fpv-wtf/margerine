@@ -21,7 +21,7 @@ Sentry.init({
 
 
 const { lock, unlock } = require("./src/exploit")
-const { wrapSentry } = require("./src/utils")
+const { wrapSentry, downloadFile } = require("./src/utils")
 const { Server } = require('http')
 
 const proxyPort = 8874
@@ -89,51 +89,32 @@ const argv = yargs
         describe: 'port to start ong'
       })
   }, (argv) => {
-    const client = Adb.createClient()   
-
-
-    client.listDevices()
-    .then(devices => {
-        if(devices.length == 0) {
-            throw "no adb devices found"
-        }
-        const device = devices[0]
-        
-        return client.reverse(device.id, "tcp:8089", "tcp:"+(argv.port ? argv.port : proxyPort))
-        .then(function(conn) {
-            return proxyListen(proxyPort)
-        })
-
-    })
-    .catch(error => {
-        console.log(error)
-        process.exit(1)
-    })
-
+    const port = argv.port ? argv.port : proxyPort
+    return proxyListen(port)
     
 })
-.command('payload [payloaddir] [setupexec]', 'copies the payload folder to / and executes setupexec', (yargs) => {
+.command('payload [payload] [exec]', 'installs wtfos (by default) or another payload', (yargs) => {
     return yargs
-      .positional('payloaddir', {
-        describe: '(optional) directory to use for root payload defaults to ./payload'
+      .positional('payload', {
+        describe: '(optional) payload tgz url, path or directory to use'
       })
-      .positional('setupexec', {
-        describe: '(optional) what to execute after copy'
+      .positional('exec', {
+        describe: '(optional) what to execute after unpack'
       })
   }, (argv) => {
     //wrapSentry("payload", () => {
-        const payloadDir = argv.payloaddir ? argv.payloaddir : "payload"
-        const setupExec = argv.setupexec ? argv.setupexec : (payloadDir === "payload" ? "/blackbox/margerine/patch.sh" : false)
-        const client = Adb.createClient()   
-
-
+        const payload = argv.payload ? argv.payload : "https://github.com/fpv-wtf/wtfos/releases/latest/download/setup-payload.tgz"
+        var setupExec = argv.exec ? argv.exec : (!argv.payload ? "cd /tmp/setup/ && sh bootsrap-wtfos.sh" : false)
+        const client = Adb.createClient() 
+        const uuid = crypto.randomUUID()
+        var payloadtgz = "tmp/payload-"+uuid+".tgz"
+        var keepPayload = true
         client.listDevices()
         .then(devices => {
             if(devices.length == 0) {
                 throw "no adb devices found"
             }
             const device = devices[0]
-            const uuid = crypto.randomUUID()
             return client.shell(device.id, 'getprop ro.product.device')
             .then(Adb.util.readAll)
             .then(output => {
@@ -141,14 +122,30 @@ const argv = yargs
               if(!response.includes("wm150") && !response.includes("wm170")) {
                   throw "device not supported"
               }
-              console.log("tarring")
-              return tar.c({ file: "payload-"+uuid+".tar", cwd: payloadDir, gzip: false, portable: true }, fs.readdirSync(payloadDir))
-             
+              
+              if(fs.existsSync(payload) && fs.lstatSync(payload).isDirectory()) {
+                if(!fs.existsSync("tmp")) {
+                    fs.mkdirSync("tmp")
+                }
+                keepPayload = false
+                console.log("tarring")
+                return tar.c({ file: payloadtgz, cwd: payload, gzip: true, portable: true }, fs.readdirSync(payload))
+              }
+              else if(payload.startsWith("https://")) {
+                if(!fs.existsSync("tmp")) {
+                    fs.mkdirSync("tmp")
+                }
+                keepPayload = false
+                return downloadFile(payload, payloadtgz)
+              }
+              else if(payload.endsWith(".tgz") || payload.endsWith(".tar.gz")) {
+                  payloadtgz = payload
+              }
               
             })
-            .then(transfer=> {
+            .then(()=> {
                 console.log("uploading")
-                return client.push(device.id, "payload-"+uuid+".tar", '/tmp/payload.tar')
+                return client.push(device.id, payloadtgz, '/tmp/payload.tgz')
             })
             .then(transfer=> {
                 return new Promise((resolve, reject) => {
@@ -157,23 +154,22 @@ const argv = yargs
                   });
             })
             .then(() => {
-                fs.unlinkSync("payload-"+uuid+".tar")
+                if(!keepPayload) {
+                    fs.unlinkSync(payloadtgz)
+                }
                 console.log("extracting")
-                return client.shell(device.id, 'tar xvf /tmp/payload.tar -C / && rm /tmp/payload.tar')
+                return client.shell(device.id, 'busybox gunzip -c /tmp/payload.tgz | tar xvf - -C /tmp')
                 .then(Adb.util.readAll)
                 .then(output => {
                     console.log("unpacked", output.toString().trim())
                 })
             })
             .then(() => {
-                return client.reverse(device.id, "tcp:8089", "tcp:"+proxyPort)
-                .then(function(conn) {
-                  return proxyListen(proxyPort)
-                })
+                return proxyListen(proxyPort)
             })
             .then(() => {
                 var exitCode = 255
-                return client.shell(device.id, "chmod u+x "+setupExec+" && "+setupExec+"; echo \"exitCode:$?\"")
+                return client.shell(device.id, setupExec+"; echo \"exitCode:$?\"")
                 .then(function(conn) {
                     return new Promise((resolve, reject) => {
                         conn.on('data', function(data) {
@@ -195,8 +191,16 @@ const argv = yargs
 
                         })
                     });
-                })
-                  
+                })   
+            }).then(() => {
+                if(!argv.payload) {
+                    console.log("installing margerine flavor and rebooting")
+                    return client.shell(device.id, 'PATH="/opt/bin:$PATH" http_proxy="http://127.0.0.1:8089/" /opt/bin/opkg install default-margerine-proxy && reboot')
+                    .then(Adb.util.readAll)
+                    .then(output => {
+                        console.log(output.toString())
+                    })
+                }
             })
         })
         .then(() => {

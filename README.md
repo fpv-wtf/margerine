@@ -6,8 +6,6 @@
 Currently only works reliably on **Windows** and **Mac OS X**, Linux has strange issues in the USB stack - YMMW.
 
 # tl;dr;
-Use Node.js version 16.x
-
 Install **nodejs** and the Javascript dependencies:
 
     npm install
@@ -56,9 +54,11 @@ Have fun! [consider donating](https://github.com/fpv-wtf/margerine#support-the-e
     margerine <command>
     
     Commands:
-      margerine unlock [serialport]    unlock device and enable adb
-      margerine lock [serialport]      disable adb and relock device
-    
+      margerine unlock [serialport]       unlock device and enable adb
+      margerine lock [serialport]         disable adb and relock device
+      margerine.js proxy [port]           start the built in http -> https proxy
+      margerine payload [payload] [exec]  installs wtfos (by default) or another
+                                          payload
     Options:
       --help     Show help                                                 [boolean]
       --version  Show version number                                       [boolean]
@@ -92,4 +92,4 @@ Special thanks go to: @jaanuke, @funnel and @fichek over on our [Discord](https:
 
 ## Support the effort
 
-This took **A LOT** of my free time over the past year. If you'd like, you can send some ETH to `0xbAB1fec80922328F27De6E2F1CDBC2F322397637` or BTC to `3L7dE5EHtyd2b1tXBwdnWC2MADkV2VTbrq` or [buy me a coffe](https://www.buymeacoffee.com/fpv.wtf). I would really appreciate it.
+This took **A LOT** of my free time over the past year. If you'd like, you can send some ETH to `0xbAB1fec80922328F27De6E2F1CDBC2F322397637` or BTC to `3L7dE5EHtyd2b1tXBwdnWC2MADkV2VTbrq` or [buy me a coffe](https://www.buymeacoffee.com/fpv.wtf).

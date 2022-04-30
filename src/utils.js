@@ -3,6 +3,9 @@ const Sentry = require("@sentry/node");
 const fs = require("fs")
 const path = require("path")
 const readline = require("readline")
+
+const https = require("https");
+
 const rl = readline.createInterface({
     input: process.stdin,
     output: process.stdout
@@ -125,6 +128,33 @@ const logInfo = function(category, message, level) {
       });
 }
 
+const downloadFile = (url, path) => {
+    return new Promise((resolve, reject) => {
+        const request = https.get(url, (res) => {
+            if(res.statusCode === 301 || res.statusCode === 302) {
+                resolve(downloadFile(res.headers.location, path))
+                return
+            }
+            if(res.statusCode !== 200) {
+                reject(res.statusCode)
+                return
+            }
+            res.on('error', error => {
+                reject(error)
+            })
+            const writeStream = fs.createWriteStream(path);
+            res.pipe(writeStream);
+            writeStream.on("finish", () => {
+              writeStream.close();
+              resolve(path)
+            });
+        });
+        request.on('error', error => {
+            reject(error)
+        })
+    })
+}
+
 const wrapSentry = async function(op, action) {
     const transaction = Sentry.startTransaction({
         op: op
@@ -155,4 +185,5 @@ module.exports.confirm = confirm
 module.exports.talk = talk
 module.exports.logInfo = logInfo
 module.exports.wrapSentry = wrapSentry
+module.exports.downloadFile = downloadFile
 
