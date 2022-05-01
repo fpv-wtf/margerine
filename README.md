@@ -6,7 +6,7 @@
 Currently only works reliably on **Windows** and **Mac OS X**, Linux has strange issues in the USB stack - YMMW.
 
 # tl;dr;
-Install **nodejs** and the Javascript dependencies:
+Install **nodejs v16** or above and the Javascript dependencies:
 
     npm install
 
@@ -48,6 +48,10 @@ Have fun! [consider donating](https://github.com/fpv-wtf/margerine#support-the-e
     - Check out the [dfbdoom](https://github.com/fpv-wtf/dfbdoom/tree/main/jni) project. 
  - Reverse engineer stuff with IDA, Ghidra and/or [Frida](https://github.com/fpv-wtf/frida-core).
 
+## Additional Documentation
+
+Check out our wonderful [wiki](https://github.com/fpv-wtf/margerine/wiki).
+
 ## Advanced usage
 
     node margerine --help
@@ -69,17 +73,7 @@ Magic unicorn dust and sprinkles. For the time being, we're keeping the details 
 
 ## To-do
 
-- Chroot for any/all modifications
-	-  to enable using one of the GPIO keys to skip loading modifications during startup
-- Some kind of package manager
-	- ipkg seems like an embeddable option
-	- Device doesn't have internet access by default
-		- Just adb push packages?
-		- Route RNDIS
-- A launcher
-	- Needs hooking or injecting directly into the existing GUI
-- More documentation
-- Eventually create a nice web GUI
+See the [wiki](https://github.com/fpv-wtf/margerine/wiki/Possible-Features).
 
 ## It's spelled margarine
 

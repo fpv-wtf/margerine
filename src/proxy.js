@@ -86,7 +86,7 @@ module.exports.listen = (port) => {
     });
     server.listen(port, '0.0.0.0', () => {
         console.log("proxy listening on port: "+port)
-        var client = Adb.createClient()
+        var client = Adb.createClient({host:"127.0.0.1"}) 
         client.trackDevices()
         .then(function(tracker) {
             tracker.on('add', function(device) {

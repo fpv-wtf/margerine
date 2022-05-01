@@ -105,7 +105,8 @@ const argv = yargs
     //wrapSentry("payload", () => {
         const payload = argv.payload ? argv.payload : "https://github.com/fpv-wtf/wtfos/releases/latest/download/setup-payload.tgz"
         var setupExec = argv.exec ? argv.exec : (!argv.payload ? "cd /tmp/setup/ && sh bootsrap-wtfos.sh" : false)
-        const client = Adb.createClient() 
+        //127.0.0.1 is required because new os x has ::1 and adb doesn't listen there
+        const client = Adb.createClient({host:"127.0.0.1"}) 
         const uuid = crypto.randomUUID()
         var payloadtgz = "tmp/payload-"+uuid+".tgz"
         var keepPayload = true
