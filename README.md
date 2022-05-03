@@ -60,7 +60,7 @@ Check out our wonderful [wiki](https://github.com/fpv-wtf/margerine/wiki).
     Commands:
       margerine unlock [serialport]       unlock device and enable adb
       margerine lock [serialport]         disable adb and relock device
-      margerine.js proxy [port]           start the built in http -> https proxy
+      margerine proxy [port]              start the built in http -> https proxy
       margerine payload [payload] [exec]  installs wtfos (by default) or another
                                           payload
     Options:
