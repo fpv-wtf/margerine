@@ -20,6 +20,7 @@ Have fun! [consider donating](https://github.com/fpv-wtf/margerine#support-the-e
 
 ## Troubleshooting
  - **waving wand, result e0** - make sure you've followed all the instructions below, reboot your Goggles and try again. It should eventually work.
+ - **This error originated either by throwing inside of an async function** - stop it and try again (multiple times)
  - The device might change it's COM port number on Windows (eg. COM4 -> COM5) in the middle of the exploit and error out. That's a good sign! Look up the new COM port in Device Manager (if auto detect didn't work for you) and re-run the exploit to finish everything up.
  - The device being exploited should not be connected to anything else; i.e. Googles to AU or AU to Goggles.
  - Make sure there's no SD card in your device.
