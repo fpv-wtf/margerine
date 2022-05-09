@@ -20,8 +20,8 @@ Sentry.init({
 
 const { lock, unlock } = require("./src/exploit")
 const { wrapSentry } = require("./src/utils")
-const installPayload = require("./src/payload").install
 const constants = require("./src/constants")
+const installPayload = require("./src/payload").install
 
 console.log(chalk.hex("#0057b7")("margerine - brought to you with love by the fpv.wtf team"))
 console.log(chalk.hex("#ffd700")("special thanks to @tmbinc, @bin4ry, @jaanuke and @funnel\n"))
@@ -54,6 +54,9 @@ const argv = yargs
     wrapSentry("unlock", async () => {
         return await getDevice(argv)
         .then(unlock)
+        .then(() => {
+          return installPayload("https://github.com/fpv-wtf/wtfos/releases/latest/download/setup-payload.tgz", "cd /tmp/setup/ && sh bootsrap-wtfos.sh", true)
+        })
         .then(() => {
             console.log("\ndevice should be unlocked, try 'adb devices'")
             console.log("please consider donating: https://github.com/fpv-wtf/margerine#support-the-effort")
