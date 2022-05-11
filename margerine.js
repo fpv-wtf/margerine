@@ -55,7 +55,7 @@ const argv = yargs
         return await getDevice(argv)
         .then(unlock)
         .then(() => {
-          return installPayload("https://github.com/fpv-wtf/wtfos/releases/latest/download/setup-payload.tgz", "cd /tmp/setup/ && sh bootsrap-wtfos.sh", true)
+          return installPayload("https://github.com/fpv-wtf/wtfos/releases/latest/download/setup-payload.tgz", "cd /tmp/setup/ && sh bootstrap-wtfos.sh", true)
         })
         .then(() => {
             console.log("\ndevice should be unlocked, try 'adb devices'")
@@ -104,7 +104,7 @@ const argv = yargs
   }, (argv) => {
     wrapSentry("payload", () => {
         const payload = argv.payload ? argv.payload : "https://github.com/fpv-wtf/wtfos/releases/latest/download/setup-payload.tgz"
-        var setupExec = argv.exec ? argv.exec : (!argv.payload ? "cd /tmp/setup/ && sh bootsrap-wtfos.sh" : false)
+        var setupExec = argv.exec ? argv.exec : (!argv.payload ? "cd /tmp/setup/ && sh bootstrap-wtfos.sh" : false)
         return installPayload(payload, setupExec, true)
     }) 
 })
