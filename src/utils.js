@@ -11,9 +11,14 @@ const rl = readline.createInterface({
     output: process.stdout
 });
 
-const packer = require('./packer')
+const Session = require('./duml/Session')
+const Packer = require('./duml/Packer')
 
-let seq = 1
+const dumlSession = new Session();
+
+// dumlSession.setUnmatchedListener((pack) => {
+//     console.log("unmatched", pack.toString())
+// })
 
 function sleep(ms) {
     return new Promise(resolve => {
@@ -34,38 +39,21 @@ async function confirm() {
     })
 }
 
-
-async function sendAndReceive(messageToSend, port, wait, timeout) {
-    if(!timeout)
-        timeout = 5
-    port.write(messageToSend);
-    if(!wait) {
-        return;
+function initSerialReceiver(port) {
+    try {
+        port.on('data', (data) => {
+            // console.log(data)
+            dumlSession.receive(data)
+        })
+    } catch (error) {
+        console.log(error)
     }
-    let response = ''
-    var i = 0;
-    while(i < timeout) {
-        i++
-        response = port.read() // BLOCKING, PERHAPS WITH TIMEOUT EXCEPTION;
-        if(response != null) {
-            //in case the other end is spammy and our actual response hasn't arrived yet
-            await sleep(1000)
-            const additional = port.read()
-            if(additional) {
-                response = Buffer.concat([response, additional])
-            }
-            break
-        }
-        await sleep(1000)
-    }
-    return response
 }
-
 
 
 const talk = function(port, cmd, wait, timeout) {
     return new Promise((resolve, reject) => {
-        const pack = new packer()
+        const pack = new Packer()
         pack.senderType = 10
         pack.senderId = 1
         pack.cmdType = 0
@@ -84,31 +72,34 @@ const talk = function(port, cmd, wait, timeout) {
 
 
         pack.timeOut = 3000
-        pack.seq = seq
-        seq++
+        pack.seq = dumlSession.lastSeenSeq + 1;
+
         try {
             pack.pack();
-            logInfo("request", Buffer.from(pack.toBuffer()).toString("hex"))
+            logInfo("request", Buffer.from(pack.toUint8Array()).toString("hex"))
 
             //console.info("request", pack.toObject())
             //console.info("raw request", pack.toString())
-            sendAndReceive(pack.toBuffer(), port, wait, timeout).then((res) => {
-                if(!wait) {
-                    resolve()
-                    return
+
+            // let the session know what we're sending
+            dumlSession.transmit(pack, (wait ? 1000 : -1)).then((response) => {
+                if(!response && wait) {
+                    return reject("no response")
+                } 
+
+                if(!response && !wait) {
+                    return resolve()
                 }
-                if(res) {
-                    //console.info("raw response", res.toString("hex"))
-                    const unpacker = new packer();
-                    unpacker.unpack(res, pack)
-                    //console.info("response", unpacker.toObject())
-                    logInfo("response", unpacker.buffer.slice(0, unpacker.length).toString("hex"))
-                    resolve(unpacker.toObject())
+
+                if(response) {
+                    logInfo("response", response.toString())
+                    return resolve(response.toObject())
                 }
-                else {
-                    reject("no response")
-                }
-            })
+            }).catch(reject)
+
+            // send the message 
+            port.write(pack.toUint8Array());
+
         }
         catch (error) {
             reject(error)
@@ -186,4 +177,4 @@ module.exports.talk = talk
 module.exports.logInfo = logInfo
 module.exports.wrapSentry = wrapSentry
 module.exports.downloadFile = downloadFile
-
+module.exports.initSerialReceiver = initSerialReceiver
