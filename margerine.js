@@ -18,7 +18,7 @@ Sentry.init({
 });
 
 
-const { lock, unlock } = require("./src/exploit")
+const { lock, unlock, doShell} = require("./src/exploit")
 const { wrapSentry } = require("./src/utils")
 const constants = require("./src/constants")
 const installPayload = require("./src/payload").install
@@ -86,28 +86,30 @@ const argv = yargs
 .command('proxy [port]', 'start the built in http -> https proxy', (yargs) => {
     return yargs
       .positional('port', {
-        describe: 'port to start ong'
+        describe: 'port to start on'
       })
   }, (argv) => {
     const port = argv.port ? argv.port : constants.defaultProxyPort
     return proxyListen(port)
     
 })
-.command('payload [payload] [exec]', 'installs wtfos (by default) or another payload', (yargs) => {
-    return yargs
-      .positional('payload', {
-        describe: '(optional) payload tgz url, path or directory to use'
-      })
-      .positional('exec', {
-        describe: '(optional) what to execute after unpack'
-      })
-  }, (argv) => {
-    wrapSentry("payload", () => {
-        const payload = argv.payload ? argv.payload : "https://github.com/fpv-wtf/wtfos/releases/latest/download/setup-payload.tgz"
-        var setupExec = argv.exec ? argv.exec : (!argv.payload ? "cd /tmp/setup/ && sh bootstrap-wtfos.sh" : false)
-        return installPayload(payload, setupExec, true)
-    }) 
+.command('shell <command> [port]', 'execute a command on rooted device, once per reboot', (yargs) => {
+  return yargs
+    .positional('command', {
+      describe: 'command to execute'
+    })
+    .positional('serialport', {
+      describe: '(optional) serial port to connect to'
+    })
+}, (argv) => {
+  return getDevice(argv).then((path) => {
+    doShell(path, argv.command)  
+  })
 })
+
+
+
+
 
 .demandCommand()
 .argv

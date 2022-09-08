@@ -10,7 +10,7 @@ Install **nodejs v16** or above and the Javascript dependencies:
 
     npm install
 
-Remove your SD card for the duration of the exploit, power up the victim device, connect it via USB and run:
+Remove your SD card for the duration of the exploit, power up the device, connect it via USB and run:
 
     node margerine.js unlock
 
@@ -28,7 +28,7 @@ Have fun! [consider donating](https://github.com/fpv-wtf/margerine#support-the-e
 
 
 ## Other notes
- - Requires an internet connection. Certain signing procedure happens on [Drone-Hacks](https://drone-hacks.com/) server kindly provided by @bin4ry
+ - Requires an internet connection. Challange signing procedure happens on [Drone-Hacks](https://drone-hacks.com/) server kindly provided by @bin4ry.
  - Takes few minutes. Make sure your battery is not too low when powering AU/Vista from a quad.
  - You have to run `node margerine.js lock` before the Assistant will allow you to flash firmwares again.
  - Disables SELinux for you
@@ -58,18 +58,14 @@ Check out our wonderful [wiki](https://github.com/fpv-wtf/margerine/wiki).
     margerine <command>
     
     Commands:
-      margerine unlock [serialport]       unlock device and enable adb
-      margerine lock [serialport]         disable adb and relock device
-      margerine proxy [port]              start the built in http -> https proxy
-      margerine payload [payload] [exec]  installs wtfos (by default) or another
-                                          payload
+      margerine unlock [serialport]        unlock device and enable adb
+      margerine lock [serialport]          disable adb and relock device
+      margerine proxy [port]               start the built in http -> https proxy
+      margerine.js shell <command> [port]  execute a command on rooted device,
+                                           once per reboot
     Options:
-      --help     Show help                                                 [boolean]
-      --version  Show version number                                       [boolean]
-
-## How does this work
-
-Magic unicorn dust and sprinkles. For the time being, we're keeping the details private.
+      --help     Show help                                               
+      --version  Show version number                                       
 
 ## To-do
 

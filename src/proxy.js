@@ -16,7 +16,7 @@
         rejectUnauthorized: false
     }
     var protocol = http
-    if(request.url.startsWith("http://")) {
+    if(request.url.startsWith("http://") && !request.url.startsWith("http://repo.localdev.me")) {
         url = "https://"+request.url.substring("http://".length)
         protocol = https
     }
