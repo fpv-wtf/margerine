@@ -31,7 +31,6 @@
 	},
 	"homepage": "https://github.com/fpv-wtf/margerine#readme",
 	"dependencies": {
-		"@devicefarmer/adbkit": "2.11.3",
 		"@sentry/node": "^6.18.1",
 		"@sentry/tracing": "^6.18.1",
 		"add": "^2.0.6",
