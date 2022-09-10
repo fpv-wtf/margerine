@@ -4,9 +4,6 @@ const { SerialPort } = require('serialport')
 const yargs = require('yargs')
 const chalk = require('chalk')
 
-const proxyListen = require("./src/proxy").listen
-
-
 /* we use Sentry to help debug in case of errors in the obfuscated build and basic analytics */
 const Sentry = require("@sentry/node");
 const Tracing = require("@sentry/tracing");
@@ -77,16 +74,6 @@ const argv = yargs
             console.log("\nstartup patches should be disabled, assistant should be happy now")
         })
     })
-    
-})
-.command('proxy [port]', 'start the built in http -> https proxy', (yargs) => {
-    return yargs
-      .positional('port', {
-        describe: 'port to start on'
-      })
-  }, (argv) => {
-    const port = argv.port ? argv.port : constants.defaultProxyPort
-    return proxyListen(port)
     
 })
 .command('shell <command> [port]', 'execute a command on rooted device, once per reboot', (yargs) => {
