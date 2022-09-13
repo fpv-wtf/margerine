@@ -82,4 +82,4 @@ Special thanks go to: @jaanuke, @funnel and @fichek over on our [Discord](https:
 
 ## Support the effort
 
-This took **A LOT** of my free time over the past year. If you'd like, you can send some ETH to `0xbAB1fec80922328F27De6E2F1CDBC2F322397637` or BTC to `3L7dE5EHtyd2b1tXBwdnWC2MADkV2VTbrq` or [buy me a coffe](https://www.buymeacoffee.com/fpv.wtf).
+If you'd like, you can support the effort on [Open Collective](https://opencollective.com/fpv-wtf/donate?amount=10), send some ETH to `0xbAB1fec80922328F27De6E2F1CDBC2F322397637` or BTC to `3L7dE5EHtyd2b1tXBwdnWC2MADkV2VTbrq`.
