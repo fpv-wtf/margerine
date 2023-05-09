@@ -1,5 +1,7 @@
 const Sentry = require("@sentry/node");
 
+const { SerialPort } = require('serialport')
+
 const fs = require("fs")
 const path = require("path")
 const readline = require("readline")
@@ -34,13 +36,61 @@ async function confirm() {
     })
 }
 
+async function getDevice(path, noexit) {
+
+    return SerialPort.list()
+    .then(portInfos => {
+        //console.log(portInfos)
+        var dji = path ? portInfos.filter(pinfo => { return pinfo.path===path }) : portInfos.filter(pinfo => `${pinfo.vendorId}`.match(/2CA3/i))
+        if(!dji.length) {
+            if(noexit) {
+                return false
+            }
+            else {
+                if(path) {
+                    console.log(path + " not found")
+                }
+                else {
+                    console.log("no dji devices detected\nyou may wish to specify a COM port, see node margerine.js --help")
+                }
+                process.exit(1)
+            }
+
+        }
+        return dji[0].path
+    })
+
+}
+
+async function waitDevice(extra, path) {
+  //in case the serial port hasn't gone away yet
+  await sleep(1000)
+  while(!await getDevice(path, true)) {
+    await sleep(1000)    
+  }
+  if(extra) {
+    //so all services have time to start in case of a fresh boot
+    await sleep(extra) 
+    
+    //make sure the device hasn't gone away
+    if(!await getDevice(path, true)) {
+      //start again
+      return waitDevice(extra, path)
+    }
+  }
+}
+
+
 
 async function sendAndReceive(messageToSend, port, wait, timeout) {
     if(!timeout)
         timeout = 5
     port.write(messageToSend);
     if(!wait) {
-        return;
+        //let the write flush, otherwise "someone" can close the port before it actually happens
+        //500ms is probably way too much, but we try to be conservative
+        await sleep(500)
+        return
     }
     let response = ''
     var i = 0;
@@ -180,10 +230,14 @@ const wrapSentry = async function(op, action) {
     })
 }
 
+
+
+
 module.exports.sleep = sleep
 module.exports.confirm = confirm
 module.exports.talk = talk
 module.exports.logInfo = logInfo
 module.exports.wrapSentry = wrapSentry
 module.exports.downloadFile = downloadFile
-
+module.exports.getDevice = getDevice
+module.exports.waitDevice = waitDevice
